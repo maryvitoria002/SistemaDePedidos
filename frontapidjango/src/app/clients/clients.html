@@ -1,0 +1,92 @@
+<div class="toolbar">
+  <div>
+    <h1>Clientes</h1>
+    <p class="muted">Cadastro usado para criar pedidos.</p>
+  </div>
+  <button type="button" (click)="showForm = !showForm">
+    {{ showForm ? 'Cancelar' : 'Novo cliente' }}
+  </button>
+</div>
+
+@if (error) { <p class="error">{{ error }}</p> }
+@if (success) { <p class="success">{{ success }}</p> }
+
+@if (loading) {
+  <p class="muted">Carregando clientes...</p>
+} @else if (error) {
+  <button type="button" class="secondary" (click)="carregar()">Tentar novamente</button>
+}
+
+@if (showForm) {
+  <form class="card" (ngSubmit)="criar()">
+    <h2>Novo cliente</h2>
+    <div class="form-grid">
+      <label>Nome<input [(ngModel)]="nome" name="nome" required /></label>
+      <label>CPF<input [(ngModel)]="cpf" name="cpf" maxlength="11" /></label>
+      <label>Email<input type="email" [(ngModel)]="email" name="email" required /></label>
+      <label>Telefone<input [(ngModel)]="telefone" name="telefone" maxlength="20" /></label>
+      <label>Tipo
+        <select [(ngModel)]="tipo" name="tipo">
+          <option value="COMUM">Comum</option>
+          <option value="VIP">VIP</option>
+        </select>
+      </label>
+    </div>
+    <button type="submit">Criar cliente</button>
+  </form>
+}
+
+<table style="margin-top: 16px">
+  <thead>
+    <tr><th>Nome</th><th>Email</th><th>Telefone</th><th>Tipo</th><th></th></tr>
+  </thead>
+  <tbody>
+    @for (cliente of clientes; track cliente.id) {
+      <tr>
+        <td>{{ cliente.nome }}</td>
+        <td>{{ cliente.email }}</td>
+        <td>{{ cliente.telefone || '-' }}</td>
+        <td><span class="badge">{{ cliente.tipo }}</span></td>
+        <td>
+          <div class="actions">
+            <button type="button" class="secondary" (click)="consultarPedidos(cliente)">Ver pedidos</button>
+            <button type="button" class="danger" (click)="excluir(cliente)">Excluir</button>
+          </div>
+        </td>
+      </tr>
+    } @empty {
+      <tr><td colspan="5" class="muted">Nenhum cliente encontrado.</td></tr>
+    }
+  </tbody>
+</table>
+
+@if (clienteSelecionado) {
+  <section class="card" style="margin-top: 20px">
+    <h2>Pedidos de {{ clienteSelecionado.nome }}</h2>
+    @if (loadingPedidos) {
+      <p class="muted">Carregando pedidos...</p>
+    } @else if (pedidosCliente.length) {
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Status</th><th>Valor total</th><th>Valor pago</th><th>Forma de pagamento</th><th>Status do pagamento</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (pedido of pedidosCliente; track pedido.id) {
+            <tr>
+              <td>{{ pedido.id.slice(0, 8) }}</td>
+              <td><span class="badge">{{ pedido.status }}</span></td>
+              <td>R$ {{ pedido.valor_total }}</td>
+              <td>R$ {{ pedido.valor_pago }}</td>
+              <td>{{ pedido.forma_pagamento || '-' }}</td>
+              <td>{{ pedido.status_pagamento }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <p class="muted">Este cliente não possui pedidos.</p>
+    }
+  </section>
+}

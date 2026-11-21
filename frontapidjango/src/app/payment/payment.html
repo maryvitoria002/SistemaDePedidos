@@ -1,0 +1,23 @@
+<a class="button secondary" routerLink="/pedidos">Voltar aos pedidos</a>
+
+@if (error) { <p class="error">{{ error }}</p> }
+
+@if (pedido) {
+  <section class="card panel" style="margin-top:16px">
+    <span class="badge">{{ pedido.status }}</span>
+    <h1>Pagamento do pedido</h1>
+    <p><strong>Total:</strong> R$ {{ pedido.valor_total }}</p>
+    <p><strong>Valor com desconto:</strong> R$ {{ pedido.valor_com_desconto }}</p>
+
+    <label>Forma de pagamento
+      <select [(ngModel)]="formaPagamento">
+        <option value="PIX">PIX — 5% de desconto</option>
+        <option value="CARTAO_CREDITO">Cartão de crédito — acréscimo de 3%</option>
+        <option value="BOLETO">Boleto — sem alteração</option>
+      </select>
+    </label>
+    <div class="actions">
+      <button type="button" (click)="pagar()">Confirmar pagamento</button>
+    </div>
+  </section>
+}

@@ -1,0 +1,50 @@
+<a class="button secondary" routerLink="/pedidos">Voltar aos pedidos</a>
+
+@if (error) { <p class="error">{{ error }}</p> }
+
+@if (pedido) {
+  <section class="card panel" style="margin-top:16px">
+    <div class="toolbar">
+      <div>
+        <span class="badge">{{ pedido.status }}</span>
+        <h1>Pedido {{ pedido.id.slice(0, 8) }}</h1>
+      </div>
+      @if (pedido.status === 'CRIADO') {
+        <a class="button" [routerLink]="['/pedidos', pedido.id, 'pagar']">Pagar pedido</a>
+      }
+    </div>
+
+    <p><strong>Cliente:</strong> {{ cliente?.nome || pedido.cliente }}</p>
+    <p><strong>Status do pedido:</strong> {{ pedido.status }}</p>
+    <p><strong>Status do pagamento:</strong> {{ pedido.status_pagamento }}</p>
+    <p><strong>Forma de pagamento:</strong> {{ pedido.forma_pagamento || '-' }}</p>
+    <p class="price">Valor total: R$ {{ pedido.valor_total }}</p>
+    <p><strong>Valor pago:</strong> R$ {{ pedido.valor_pago }}</p>
+
+    <h2>Produtos</h2>
+    <table>
+      <thead>
+        <tr><th>Produto</th><th>Quantidade</th><th>Valor unitário</th><th>Valor total</th></tr>
+      </thead>
+      <tbody>
+        @for (item of pedido.itens || []; track item.produto) {
+          <tr>
+            <td>{{ nomeProduto(item.produto) }}</td>
+            <td>{{ item.quantidade }}</td>
+            <td>R$ {{ precoUnitario(item.produto) }}</td>
+            <td>R$ {{ totalProduto(item.produto, item.quantidade) }}</td>
+          </tr>
+        } @empty {
+          @for (id of pedido.produtos; track id) {
+            <tr>
+              <td>{{ nomeProduto(id) }}</td>
+              <td>1</td>
+              <td>R$ {{ precoUnitario(id) }}</td>
+              <td>R$ {{ precoUnitario(id) }}</td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </section>
+}

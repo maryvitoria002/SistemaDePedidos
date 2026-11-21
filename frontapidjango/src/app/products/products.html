@@ -1,0 +1,59 @@
+<div class="toolbar">
+  <div>
+    <h1>Produtos</h1>
+    <p class="muted">Catálogo disponível na API.</p>
+  </div>
+  <button type="button" (click)="showForm = !showForm">
+    {{ showForm ? 'Cancelar' : 'Novo produto' }}
+  </button>
+</div>
+
+@if (error) { <p class="error">{{ error }}</p> }
+@if (success) { <p class="success">{{ success }}</p> }
+
+@if (loading) {
+  <p class="muted">Carregando produtos...</p>
+} @else if (error) {
+  <button type="button" class="secondary" (click)="carregar()">Tentar novamente</button>
+}
+
+@if (showForm) {
+  <form class="card" (ngSubmit)="criar()">
+    <h2>Novo produto</h2>
+    <div class="form-grid">
+      <label>Nome<input [(ngModel)]="nome" name="nome" required /></label>
+      <label>Preço<input [(ngModel)]="preco" name="preco" required /></label>
+      <label>Tipo
+        <select [(ngModel)]="tipo" name="tipo">
+          <option value="FISICO">Físico</option>
+          <option value="DIGITAL">Digital</option>
+        </select>
+      </label>
+      @if (tipo === 'FISICO') {
+        <label>Peso (kg)<input [(ngModel)]="peso" name="peso" /></label>
+        <label>Estoque<input type="number" [(ngModel)]="estoque" name="estoque" /></label>
+      } @else {
+        <label>Tamanho do arquivo (MB)<input type="number" [(ngModel)]="tamanhoArquivo" name="tamanhoArquivo" /></label>
+      }
+    </div>
+    <button type="submit">Criar produto</button>
+  </form>
+}
+
+<div class="grid">
+  @for (produto of produtos; track produto.id) {
+    <article class="card product-card">
+      <span class="badge">{{ produto.tipo }}</span>
+      <h2>{{ produto.nome }}</h2>
+      <p class="price">R$ {{ produto.preco }}</p>
+      @if (produto.tipo === 'FISICO') {
+        <p class="muted">Estoque: {{ produto.estoque }} · Peso: {{ produto.peso }} kg</p>
+      } @else {
+        <p class="muted">Arquivo: {{ produto.tamanho_arquivo }} MB</p>
+      }
+      <a class="button" [routerLink]="['/produto', produto.id]">Ver produto</a>
+    </article>
+  } @empty {
+    <p class="muted">Nenhum produto encontrado.</p>
+  }
+</div>

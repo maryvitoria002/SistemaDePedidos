@@ -1,0 +1,88 @@
+<div class="toolbar">
+  <div>
+    <h1>Pedidos</h1>
+    <p class="muted">Crie, pague ou cancele pedidos.</p>
+  </div>
+  <button type="button" (click)="showForm = !showForm">
+    {{ showForm ? 'Cancelar' : 'Novo pedido' }}
+  </button>
+</div>
+
+@if (error) { <p class="error">{{ error }}</p> }
+@if (success) { <p class="success">{{ success }}</p> }
+
+@if (loading) {
+  <p class="muted">Carregando pedidos...</p>
+} @else if (error) {
+  <button type="button" class="secondary" (click)="carregar()">Tentar novamente</button>
+}
+
+@if (showForm) {
+  <form class="card" (ngSubmit)="criar()">
+    <h2>Novo pedido</h2>
+    <div class="form-grid">
+      <label>Cliente
+        <select [(ngModel)]="clienteId" name="cliente">
+          <option value="">Selecione</option>
+          @for (cliente of clientes; track cliente.id) {
+            <option [value]="cliente.id">{{ cliente.nome }}</option>
+          }
+        </select>
+      </label>
+      <div style="flex: 1 1 100%">
+        <h3>Itens do pedido</h3>
+        @for (item of itens; track $index) {
+          <div class="form-grid">
+            <label>Produto
+              <select [(ngModel)]="item.produto" [name]="'produto-' + $index">
+                <option value="">Selecione</option>
+                @for (produto of produtos; track produto.id) {
+                  <option [value]="produto.id">{{ produto.nome }} - R$ {{ produto.preco }}</option>
+                }
+              </select>
+            </label>
+            <label>Quantidade
+              <input type="number" min="1" [(ngModel)]="item.quantidade" [name]="'quantidade-' + $index" />
+            </label>
+            <button type="button" class="danger" (click)="removerItem($index)">Remover</button>
+          </div>
+        }
+        <button type="button" class="secondary" (click)="adicionarItem()">Adicionar produto</button>
+      </div>
+    </div>
+    <button type="submit">Criar pedido</button>
+  </form>
+}
+
+<table style="margin-top: 16px">
+  <thead>
+    <tr>
+      <th>ID</th><th>Cliente</th><th>Status</th><th>Valor total</th><th>Valor pago</th><th>Forma de pagamento</th><th>Status do pagamento</th><th></th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (pedido of pedidos; track pedido.id) {
+      <tr>
+        <td>{{ pedido.id.slice(0, 8) }}</td>
+        <td>{{ nomeCliente(pedido.cliente) }}</td>
+        <td><span class="badge">{{ pedido.status }}</span></td>
+        <td>R$ {{ pedido.valor_total }}</td>
+        <td>R$ {{ pedido.valor_pago }}</td>
+        <td>{{ pedido.forma_pagamento || '-' }}</td>
+        <td>{{ pedido.status_pagamento }}</td>
+        <td>
+          <div class="actions">
+            <a class="button secondary" [routerLink]="['/pedidos', pedido.id]">Detalhes</a>
+            @if (pedido.status === 'CRIADO') {
+              <a class="button" [routerLink]="['/pedidos', pedido.id, 'pagar']">Pagar</a>
+              <button type="button" class="secondary" (click)="cancelar(pedido)">Cancelar</button>
+              <button type="button" class="danger" (click)="excluir(pedido)">Excluir</button>
+            }
+          </div>
+        </td>
+      </tr>
+    } @empty {
+      <tr><td colspan="7" class="muted">Nenhum pedido encontrado.</td></tr>
+    }
+  </tbody>
+</table>

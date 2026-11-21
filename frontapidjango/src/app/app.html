@@ -1,0 +1,12 @@
+<header class="topbar">
+  <a class="brand" routerLink="/">Loja API</a>
+  <nav>
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Produtos</a>
+    <a routerLink="/clientes" routerLinkActive="active">Clientes</a>
+    <a routerLink="/pedidos" routerLinkActive="active">Pedidos</a>
+  </nav>
+</header>
+
+<main class="page">
+  <router-outlet />
+</main>

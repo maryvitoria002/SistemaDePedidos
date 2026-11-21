@@ -1,0 +1,52 @@
+<a class="button secondary" routerLink="/">Voltar</a>
+
+@if (error) { <p class="error">{{ error }}</p> }
+@if (success) { <p class="success">{{ success }}</p> }
+
+@if (produto) {
+  <div class="grid" style="margin-top: 16px">
+    <article class="card panel">
+      <span class="badge">{{ produto.tipo }}</span>
+      <h1>{{ produto.nome }}</h1>
+      <p class="price">R$ {{ produto.preco }}</p>
+      @if (produto.tipo === 'FISICO') {
+        <p class="muted">Estoque: {{ produto.estoque }} · Peso: {{ produto.peso }} kg</p>
+      } @else {
+        <p class="muted">Tamanho do arquivo: {{ produto.tamanho_arquivo }} MB</p>
+      }
+
+      <h3>Comprar</h3>
+      <div class="form-grid">
+        <label>Cliente
+          <select [(ngModel)]="clienteId">
+            <option value="">Selecione</option>
+            @for (cliente of clientes; track cliente.id) {
+              <option [value]="cliente.id">{{ cliente.nome }}</option>
+            }
+          </select>
+        </label>
+        <label>Quantidade
+          <input type="number" min="1" [(ngModel)]="quantidade" />
+        </label>
+      </div>
+      <button type="button" (click)="criarPedido()">Criar pedido</button>
+    </article>
+
+    <article class="card" style="flex: 1 1 300px">
+      <h2>Editar produto</h2>
+      <div class="form-grid">
+        <label>Preço<input [(ngModel)]="preco" /></label>
+        @if (produto.tipo === 'FISICO') {
+          <label>Peso<input [(ngModel)]="peso" /></label>
+          <label>Estoque<input type="number" [(ngModel)]="estoque" /></label>
+        } @else {
+          <label>Tamanho (MB)<input type="number" [(ngModel)]="tamanhoArquivo" /></label>
+        }
+      </div>
+      <div class="actions">
+        <button type="button" (click)="salvar()">Salvar</button>
+        <button type="button" class="danger" (click)="excluir()">Excluir</button>
+      </div>
+    </article>
+  </div>
+}
