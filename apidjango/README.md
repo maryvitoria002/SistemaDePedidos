@@ -1,4 +1,4 @@
-# API Django - Sistema de Pedidos
+# API Django - Backend do Sistema de Pedidos
 
 <p align="center">
   <strong>API REST para cadastro de clientes, produtos e pedidos</strong>
@@ -192,7 +192,7 @@ Exemplo de criação:
 }
 ```
 
-O formato antigo com `produto` e `quantidade` continua aceito.
+
 
 Exemplo de pagamento:
 
@@ -278,21 +278,8 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-## Segurança e desenvolvimento
-
-As configurações atuais incluem `DEBUG = True` e uma chave secreta de desenvolvimento. Antes de publicar em produção:
-
-- substitua `SECRET_KEY`;
-- configure `DEBUG = False`;
-- defina `ALLOWED_HOSTS`;
-- configure CORS de forma restritiva;
-- utilize um banco de dados adequado ao ambiente;
-- adicione variáveis de ambiente para os dados sensíveis.
 
 ## Autor
 
 Desenvolvido por [Mary Vitória](https://github.com/maryvitoria002).
 
-## Licença
-
-As informações de licença não estão definidas neste repositório no momento.

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +26,11 @@ SECRET_KEY = 'django-insecure-093l$(l==q^jj3w!77+cpd!vo$muo)i^=4q-a%jdp9qyb!mbk0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,backend').split(',')
+    if host.strip()
+]
 
 
 # Application definition
@@ -81,7 +86,7 @@ WSGI_APPLICATION = 'pedidosis.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': Path(os.getenv('DB_NAME', str(BASE_DIR / 'db.sqlite3'))),
     }
 }
 
@@ -121,6 +126,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # Email
@@ -132,7 +138,12 @@ MAILERS = {
     },
 }
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
+    origin.strip()
+    for origin in os.getenv(
+        'CORS_ALLOWED_ORIGINS',
+        'http://localhost:4200',
+    ).split(',')
+    if origin.strip()
 ]
 
 APPEND_SLASH=False

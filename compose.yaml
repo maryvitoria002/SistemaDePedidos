@@ -1,0 +1,31 @@
+services:
+  backend:
+    build:
+      context: ./apidjango
+    command: sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
+    environment:
+      ALLOWED_HOSTS: localhost,127.0.0.1,backend
+      CORS_ALLOWED_ORIGINS: http://localhost:4200
+      DB_NAME: /app/data/db.sqlite3
+    ports:
+      - "8000:8000"
+    volumes:
+      - backend-db:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/produto/')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./frontapidjango
+    ports:
+      - "4200:4200"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  backend-db:
