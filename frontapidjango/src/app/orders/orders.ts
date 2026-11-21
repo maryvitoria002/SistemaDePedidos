@@ -65,6 +65,21 @@ export class Orders implements OnInit {
       this.error = 'Selecione cliente e produtos válidos.';
       return;
     }
+    // Soma itens repetidos e impede o envio quando o estoque não atende ao total.
+    const totaisPorProduto = new Map<string, number>();
+    for (const item of this.itens) {
+      totaisPorProduto.set(item.produto, (totaisPorProduto.get(item.produto) ?? 0) + item.quantidade);
+    }
+    for (const [produtoId, quantidadeTotal] of totaisPorProduto) {
+      const produto = this.produtos.find(produtoAtual => produtoAtual.id === produtoId);
+      if (produto?.tipo === 'FISICO') {
+        const estoque = produto.estoque ?? 0;
+        if (estoque < quantidadeTotal) {
+          this.error = `Estoque insuficiente para ${produto.nome}. Disponível: ${estoque}; solicitado: ${quantidadeTotal}.`;
+          return;
+        }
+      }
+    }
     this.ordersApi.create({
       cliente: this.clienteId,
       itens: this.itens,

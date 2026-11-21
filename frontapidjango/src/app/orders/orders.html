@@ -37,7 +37,10 @@
               <select [(ngModel)]="item.produto" [name]="'produto-' + $index">
                 <option value="">Selecione</option>
                 @for (produto of produtos; track produto.id) {
-                  <option [value]="produto.id">{{ produto.nome }} - R$ {{ produto.preco }}</option>
+                  <option [value]="produto.id" [disabled]="produto.tipo === 'FISICO' && (produto.estoque ?? 0) === 0">
+                    {{ produto.nome }} - R$ {{ produto.preco }}
+                    @if (produto.tipo === 'FISICO') { - Estoque: {{ produto.estoque ?? 0 }} }
+                  </option>
                 }
               </select>
             </label>

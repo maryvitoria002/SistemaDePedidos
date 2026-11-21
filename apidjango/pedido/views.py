@@ -30,13 +30,19 @@ def create_pedido(request):
     serializer.is_valid(raise_exception=True)
     dados = dict(serializer.validated_data)
     itens = dados.pop('itens', None)
-    pedido = service.criar(
-        cliente=dados['cliente'],
-        status=dados.get('status'),
-        produto=dados.get('produto'),
-        quantidade=dados.get('quantidade'),
-        itens=itens,
-    )
+    try:
+        pedido = service.criar(
+            cliente=dados['cliente'],
+            status=dados.get('status'),
+            produto=dados.get('produto'),
+            quantidade=dados.get('quantidade'),
+            itens=itens,
+        )
+    except ValueError as error:
+        return Response(
+            {'error': str(error)},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     return Response(PedidoSerializer(pedido).data, status=status.HTTP_201_CREATED)
 
 @api_view(['PUT'])

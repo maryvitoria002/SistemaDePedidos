@@ -63,6 +63,17 @@ export class ProductDetail implements OnInit {
       this.error = 'Selecione um cliente.';
       return;
     }
+    if (this.quantidade <= 0) {
+      this.error = 'Informe uma quantidade maior que zero.';
+      return;
+    }
+    if (this.produto.tipo === 'FISICO') {
+      const estoque = this.produto.estoque ?? 0;
+      if (estoque < this.quantidade) {
+        this.error = `Estoque insuficiente para ${this.produto.nome}. Disponível: ${estoque}.`;
+        return;
+      }
+    }
     this.error = '';
     this.ordersApi.create({
       cliente: this.clienteId,
